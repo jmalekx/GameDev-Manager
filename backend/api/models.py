@@ -12,6 +12,7 @@ class Developer(models.Model):
     
     def as_dict(self):
         return{
+            'id': self.id,
             'name': self.name,
             'about': self.about,
             'experience_years': self.experience_years,
@@ -43,6 +44,16 @@ class Game(models.Model):
 
     def __str__(self):
         return f"{self.title} ({self.get_platform_display()})"
+    
+    def as_dict(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'description': self.description,
+            'release_date': self.release_date,
+            'platform': self.get_platform_display(), 
+            'developers': [developer.name for developer in self.developer.all()] 
+        }
 
 class GameDeveloper(models.Model):
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
