@@ -1,17 +1,23 @@
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
-from django.http import HttpResponse
 from .models import Developer, Game
 import json
 
 
 def test_api_view(request):
+    """Handle test API requests.
+    Returns a simple JSON response indicating the API is responsive.
+    """
     return JsonResponse({
         'message': 'Good response!'
     })
 
 def developer_api_view(request):
+    """Handle API requests for Developer model
+    Supports GET (list all), POST (create new),
+    PUT (update existing), and DELETE (to delete).
+    """
     if request.method == 'GET':
         return JsonResponse({
             'developers': [
@@ -50,25 +56,35 @@ def developer_api_view(request):
         developer.delete()
         return JsonResponse({'message': 'Developer deleted'}, status=204)
 
-    return HttpResponse(status=405)
+    return JsonResponse({'error': 'Method not allowed'}, status=405)
 
 def developer_detail_view(request,developer_id):
+    """Handle API requests for specific developer
+    """
     developer = get_object_or_404(Developer, id=developer_id)
 
     if request.method == 'GET':
         return JsonResponse(developer.as_dict())
     
-    if request.method == 'PUT':
-        #handle put to update developer
-        pass
+    elif request.method == 'PUT':
+        data = json.loads(request.body)
+        developer.name = data.get('name', developer.name)
+        developer.bio = data.get('bio', developer.bio)
+        developer.experience_years = data.get('experience_years', developer.experience_years)
+        developer.available_for_hire = data.get('available_for_hire', developer.available_for_hire)
+        developer.join_date = data.get('join_date', developer.join_date)
+        developer.save()
+        return JsonResponse({'message': 'Developer updated successfully'})
 
-    if request.method == 'DELETE':
+    elif request.method == 'DELETE':
         developer.delete()
-        return HttpResponse(status=204)
+        return JsonResponse({'message': 'Developer deleted successfully'}, status=204)
     
-    return HttpResponse(status=405)
+    return JsonResponse({'error': 'Method not allowed'}, status=405)
 
 def game_api_view(request):
+    """Handle API requests for Game model.
+    """
     if request.method == 'GET':
         return JsonResponse({
             'games': [
@@ -102,5 +118,5 @@ def game_api_view(request):
         game = get_object_or_404(Game, pk=data['id'])
         game.delete()
         return JsonResponse({'message': 'Game deleted'}, status=204)
-
-    return HttpResponse(status=405)
+    
+    return JsonResponse({'error': 'Method not allowed'}, status=405)

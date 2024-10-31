@@ -1,6 +1,7 @@
 from django.db import models
 
 class Developer(models.Model):
+    """Represents game developer with personal and professional info"""
     name = models.CharField(max_length=100)
     about = models.TextField()
     experience_years = models.IntegerField()
@@ -8,9 +9,11 @@ class Developer(models.Model):
     join_date = models.DateField()
 
     def __str__(self):
+        """Return name of developer"""
         return self.name
     
     def as_dict(self):
+        """Return dictionary representation of developer"""
         return{
             'id': self.id,
             'name': self.name,
@@ -21,6 +24,7 @@ class Developer(models.Model):
         }
     
 class Game(models.Model):
+    """Represents game with relevant details and associated developers."""
     title = models.CharField(max_length=200)
     description = models.TextField()
     release_date = models.DateField()
@@ -56,6 +60,7 @@ class Game(models.Model):
         }
 
 class GameDeveloper(models.Model):
+    """Associates game with a developer and their role."""
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     developer = models.ForeignKey(Developer,on_delete=models.CASCADE)
 
