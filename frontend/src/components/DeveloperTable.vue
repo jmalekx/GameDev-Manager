@@ -84,12 +84,11 @@ export default {
                 });
 
                 if (response.ok) {
-                    // Successfully deleted the developer
                     alert(`Developer '${developer.name}' has been deleted.`);
-                    // Emit an event to refresh the developer list
+                    //emit to refresh the developer list after deletion
                     this.$emit('fetch-developers');
                 } else {
-                    // Handle error response
+                    //handle error
                     const errorData = await response.json();
                     alert(`Error deleting developer: ${errorData.error}`);
                 }
