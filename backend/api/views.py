@@ -5,6 +5,18 @@ from .models import Developer, Game
 from django.views.decorators.csrf import csrf_exempt
 import json
 
+def update_instance(instance, data):
+    """Update model instance with provided data."""
+    for attr, value in data.items():
+        if hasattr(instance, attr):
+            setattr(instance, attr, value)
+    instance.save()
+    return instance
+
+def delete_instance(instance):
+    """Delete model instance."""
+    instance.delete()
+
 @csrf_exempt
 def test_api_view(request):
     """Handle test API requests.
@@ -16,20 +28,13 @@ def test_api_view(request):
 
 @csrf_exempt
 def developer_api_view(request):
-    """Handle API requests for Developer model
-    Supports GET (list all), POST (create new),
-    PUT (update existing), and DELETE (to delete).
-    """
+    """Handle API requests for Developer model"""
     if request.method == 'GET':
         return JsonResponse({
-            'developers': [
-                developer.as_dict() 
-                for developer in Developer.objects.all()
-            ]
+            'developers': [developer.as_dict() for developer in Developer.objects.all()]
         })
     
     elif request.method == 'POST':
-        #creating new dev
         data = json.loads(request.body)
         new_developer = Developer.objects.create(
             name=data['name'],
@@ -39,23 +44,17 @@ def developer_api_view(request):
             join_date=data['join_date'],
         )
         return JsonResponse(new_developer.as_dict(), status=201)
-    
+
     elif request.method == 'PUT':
-        #update existing
         data = json.loads(request.body)
-        developer = get_object_or_404(Developer, pk=data.get('id'))  # Fetch using 'id' from the request body
-        developer.name = data.get('name', developer.name)
-        developer.about = data.get('about', developer.about)
-        developer.experience_years = data.get('experience_years', developer.experience_years)
-        developer.available_to_hire = data.get('available_to_hire', developer.available_to_hire)
-        developer.join_date = data.get('join_date', developer.join_date)
-        developer.save()
-        return JsonResponse(developer.as_dict())
+        developer = get_object_or_404(Developer, pk=data.get('id'))
+        updated_developer = update_instance(developer, data)
+        return JsonResponse(updated_developer.as_dict())
     
     elif request.method == 'DELETE':
         data = json.loads(request.body)
         developer = get_object_or_404(Developer, pk=data['id'])
-        developer.delete()
+        delete_instance(developer)
         return JsonResponse({'message': 'Developer deleted'}, status=204)
 
     return JsonResponse({'error': 'Method not allowed'}, status=405)
@@ -86,15 +85,12 @@ def developer_detail_view(request,developer_id):
     return JsonResponse({'error': 'Method not allowed'}, status=405)
 
 @csrf_exempt
+@csrf_exempt
 def game_api_view(request):
-    """Handle API requests for Game model.
-    """
+    """Handle API requests for Game model."""
     if request.method == 'GET':
         return JsonResponse({
-            'games': [
-                game.as_dict() 
-                for game in Game.objects.all()
-            ]
+            'games': [game.as_dict() for game in Game.objects.all()]
         })
     
     elif request.method == 'POST':
@@ -106,21 +102,17 @@ def game_api_view(request):
             platform=data['platform'],
         )
         return JsonResponse(new_game.as_dict(), status=201)
-    
+
     elif request.method == 'PUT':
         data = json.loads(request.body)
         game = get_object_or_404(Game, pk=data['id'])
-        game.title = data.get('title', game.title)
-        game.description = data.get('description', game.description)
-        game.release_date = data.get('release_date', game.release_date)
-        game.platform = data.get('platform', game.platform)
-        game.save()
-        return JsonResponse(game.as_dict())
+        updated_game = update_instance(game, data)
+        return JsonResponse(updated_game.as_dict())
     
     elif request.method == 'DELETE':
         data = json.loads(request.body)
         game = get_object_or_404(Game, pk=data['id'])
-        game.delete()
+        delete_instance(game)
         return JsonResponse({'message': 'Game deleted'}, status=204)
-    
+
     return JsonResponse({'error': 'Method not allowed'}, status=405)

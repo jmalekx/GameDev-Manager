@@ -36,16 +36,6 @@
                 </div>
             </div>
         </div>
-
-        <div class="toast" id="successToast" role="alert" aria-live="assertive" aria-atomic="true" style="position: absolute; top: 20px; right: 20px; z-index: 1050;">
-            <div class="toast-header">
-                <strong class="me-auto">Success</strong>
-                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-            <div class="toast-body">
-                Developer added/updated successfully!
-            </div>
-        </div>
     </div>
 </template>
 
@@ -101,10 +91,9 @@ export default {
                 : `${baseUrl}/api/developers/`;
             const method = this.isEditing ? 'PUT' : 'POST';
 
-            // Prepare the body data, include 'about' instead of 'bio'
             const dataToSend = { 
                 name: this.developer.name,
-                about: this.developer.about,  // Ensure you're sending the 'about' field
+                about: this.developer.about,
                 experience_years: this.developer.experience_years,
                 available_to_hire: this.developer.available_to_hire,
                 join_date: this.developer.join_date
@@ -123,15 +112,26 @@ export default {
                     throw new Error('Network response was not ok');
                 }
 
-                // Handle the response as needed
                 const developerData = await response.json();
                 console.log(developerData);
+
+                // Emit event to refresh the list of developers
+                this.$emit('fetch-developers');
+
+                // Reset the form
+                this.resetForm();
+                
+                const modalElement = document.getElementById('DeveloperModal');
+                const modal = bootstrap.Modal.getInstance(modalElement);
+                modal.hide(); // Close the modal
+
             } catch (error) {
                 console.error('Error updating developer:', error);
             }
         }
 
     }
+
 };
 </script>
 

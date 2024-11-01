@@ -84,7 +84,7 @@ export default {
             });
         },
         openAddModal() {
-                    this.developerToEdit = null; // Reset to indicate new developer
+            this.developerToEdit = null; // Reset to indicate new developer
             this.$nextTick(() => {
                 const modal = new bootstrap.Modal(document.getElementById('DeveloperModal'));
                 modal.show();
@@ -101,7 +101,6 @@ export default {
                     });
 
                     if (response.ok) {
-                        alert(`Developer '${developer.name}' has been deleted.`);
                         this.$emit('fetch-developers'); // Refresh the developer list
                     } else {
                         const errorData = await response.json();
