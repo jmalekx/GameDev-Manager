@@ -120,12 +120,12 @@ export default {
     },
     methods: {
         async fetchDevelopers() {
-            const response = await fetch('http://localhost:8000/api/developers.json');
+            const response = await fetch('http://localhost:8000/api/developers/');
             const data = await response.json();
             this.developers = data.developers;
         },
         async fetchGames() {
-            const response = await fetch('http://localhost:8000/api/games.json');
+            const response = await fetch('http://localhost:8000/api/games/');
             const data = await response.json();
             this.games = data.games;
         },
