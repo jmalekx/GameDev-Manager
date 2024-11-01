@@ -24,7 +24,7 @@ class Developer(models.Model):
         }
     
 class Game(models.Model):
-    """Represents game with relevant details and associated developers."""
+    """Represents game with relevant details and associated developers"""
     title = models.CharField(max_length=200)
     description = models.TextField()
     release_date = models.DateField()
@@ -60,7 +60,7 @@ class Game(models.Model):
         }
 
 class GameDeveloper(models.Model):
-    """Associates game with a developer and their role."""
+    """Associates game with developer and role"""
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     developer = models.ForeignKey(Developer,on_delete=models.CASCADE)
 
