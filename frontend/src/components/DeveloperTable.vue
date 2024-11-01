@@ -52,7 +52,6 @@
         <DeveloperModal 
             :developerToEdit="developerToEdit"
             @fetch-developers="$emit('fetch-developers')"
-            @close-modal="closeModal"
         />
     </div>
 </template>
@@ -90,9 +89,6 @@ export default {
                 const modal = new bootstrap.Modal(document.getElementById('DeveloperModal'));
                 modal.show();
             });
-        },
-        closeModal() {
-            this.developerToEdit = null; // Reset when modal is closed
         },
         async deleteDeveloper(developer) {
             if (confirm(`Are you sure you want to delete developer '${developer.name}'?`)) {

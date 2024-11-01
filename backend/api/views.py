@@ -72,7 +72,7 @@ def developer_detail_view(request,developer_id):
     elif request.method == 'PUT':
         data = json.loads(request.body)
         developer.name = data.get('name', developer.name)
-        developer.bio = data.get('bio', developer.bio)
+        developer.about = data.get('about', developer.about)
         developer.experience_years = data.get('experience_years', developer.experience_years)
         developer.available_for_hire = data.get('available_for_hire', developer.available_for_hire)
         developer.join_date = data.get('join_date', developer.join_date)

@@ -4,7 +4,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="DeveloperModalLabel">{{ isEditing ? 'Edit Developer' : 'Add New Developer' }}</h5>
-                    <button type="button" class="btn-close" @click="closeModal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form @submit.prevent="submitForm">
@@ -95,14 +95,20 @@ export default {
                 join_date: ''
             };
         },
-        closeModal() {
-            this.resetForm();
-        },
         async submitForm() {
             const url = this.isEditing 
                 ? `${baseUrl}/api/developers/${this.developer.id}/` 
                 : `${baseUrl}/api/developers/`;
             const method = this.isEditing ? 'PUT' : 'POST';
+
+            // Prepare the body data, include 'about' instead of 'bio'
+            const dataToSend = { 
+                name: this.developer.name,
+                about: this.developer.about,  // Ensure you're sending the 'about' field
+                experience_years: this.developer.experience_years,
+                available_to_hire: this.developer.available_to_hire,
+                join_date: this.developer.join_date
+            };
 
             try {
                 const response = await fetch(url, {
@@ -110,28 +116,21 @@ export default {
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(this.developer),
+                    body: JSON.stringify(dataToSend),
                 });
 
-                if (response.ok) {
-                    await response.json(); // Optionally use the response if needed
-                    this.$emit('fetch-developers'); // Refresh the developer list
-                    this.resetForm(); // Reset the form fields
-
-                    // Show success toast
-                    const toastEl = document.getElementById('successToast');
-                    const toast = new bootstrap.Toast(toastEl);
-                    toast.show();
-                } else {
-                    const errorText = await response.text(); // Get the response text to log
-                    console.error('Error updating developer:', errorText);
-                    alert(`Error updating developer: ${response.status} - ${response.statusText}. Please check server logs for more details.`);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
                 }
+
+                // Handle the response as needed
+                const developerData = await response.json();
+                console.log(developerData);
             } catch (error) {
-                console.error('Fetch error:', error);
-                alert('An error occurred while trying to update the developer.');
+                console.error('Error updating developer:', error);
             }
         }
+
     }
 };
 </script>
