@@ -2,9 +2,10 @@ from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from .models import Developer, Game
+from django.views.decorators.csrf import csrf_exempt
 import json
 
-
+@csrf_exempt
 def test_api_view(request):
     """Handle test API requests.
     Returns a simple JSON response indicating the API is responsive.
@@ -13,6 +14,7 @@ def test_api_view(request):
         'message': 'Good response!'
     })
 
+@csrf_exempt
 def developer_api_view(request):
     """Handle API requests for Developer model
     Supports GET (list all), POST (create new),
@@ -58,6 +60,7 @@ def developer_api_view(request):
 
     return JsonResponse({'error': 'Method not allowed'}, status=405)
 
+@csrf_exempt
 def developer_detail_view(request,developer_id):
     """Handle API requests for specific developer
     """
@@ -82,6 +85,7 @@ def developer_detail_view(request,developer_id):
     
     return JsonResponse({'error': 'Method not allowed'}, status=405)
 
+@csrf_exempt
 def game_api_view(request):
     """Handle API requests for Game model.
     """
