@@ -77,14 +77,14 @@ export default {
     },
     methods: {
         openEditModal(developer) {
-            this.developerToEdit = developer; // Pass the selected developer for editing
+            this.developerToEdit = developer;
             this.$nextTick(() => {
                 const modal = new bootstrap.Modal(document.getElementById('DeveloperModal'));
                 modal.show();
             });
         },
         openAddModal() {
-            this.developerToEdit = null; // Reset to indicate new developer
+            this.developerToEdit = null;
             this.$nextTick(() => {
                 const modal = new bootstrap.Modal(document.getElementById('DeveloperModal'));
                 modal.show();
@@ -101,7 +101,7 @@ export default {
                     });
 
                     if (response.ok) {
-                        this.$emit('fetch-developers'); // Refresh the developer list
+                        this.$emit('fetch-developers'); //refresh developer list
                     } else {
                         const errorData = await response.json();
                         alert(`Error deleting developer: ${errorData.error}`);

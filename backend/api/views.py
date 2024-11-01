@@ -5,6 +5,7 @@ from .models import Developer, Game
 from django.views.decorators.csrf import csrf_exempt
 import json
 
+#implementing DRY method
 def update_instance(instance, data):
     """Update model instance with provided data."""
     for attr, value in data.items():
@@ -16,15 +17,6 @@ def update_instance(instance, data):
 def delete_instance(instance):
     """Delete model instance."""
     instance.delete()
-
-@csrf_exempt
-def test_api_view(request):
-    """Handle test API requests.
-    Returns a simple JSON response indicating the API is responsive.
-    """
-    return JsonResponse({
-        'message': 'Good response!'
-    })
 
 @csrf_exempt
 def developer_api_view(request):
@@ -70,13 +62,8 @@ def developer_detail_view(request,developer_id):
     
     elif request.method == 'PUT':
         data = json.loads(request.body)
-        developer.name = data.get('name', developer.name)
-        developer.about = data.get('about', developer.about)
-        developer.experience_years = data.get('experience_years', developer.experience_years)
-        developer.available_for_hire = data.get('available_for_hire', developer.available_for_hire)
-        developer.join_date = data.get('join_date', developer.join_date)
-        developer.save()
-        return JsonResponse({'message': 'Developer updated successfully'})
+        updated_developer = update_instance(developer, data)
+        return JsonResponse(updated_developer.as_dict())
 
     elif request.method == 'DELETE':
         developer.delete()
@@ -84,7 +71,6 @@ def developer_detail_view(request,developer_id):
     
     return JsonResponse({'error': 'Method not allowed'}, status=405)
 
-@csrf_exempt
 @csrf_exempt
 def game_api_view(request):
     """Handle API requests for Game model."""

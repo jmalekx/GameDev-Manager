@@ -20,7 +20,7 @@ from .views import test_api_view, developer_api_view, game_api_view, developer_d
 
 urlpatterns = [
     #developer api endpoints
-    path('developers/', developer_api_view, name='developer-list-create'),
+    path('developers/', developer_api_view, name='developer api'),
     path('developers/<int:developer_id>/', developer_detail_view, name='developer detail'),
     
     #game api endpoints

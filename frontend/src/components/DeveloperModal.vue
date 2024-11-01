@@ -67,10 +67,10 @@ export default {
             handler(newVal) {
                 if (newVal) {
                     this.isEditing = true;
-                    this.developer = { ...newVal }; // Deep clone to avoid mutation
+                    this.developer = { ...newVal }; //deep clone to avoid mutation
                 } else {
                     this.isEditing = false;
-                    this.resetForm(); // Reset the form for new developer
+                    this.resetForm(); //reset the form for new developer
                 }
             }
         }
@@ -115,15 +115,14 @@ export default {
                 const developerData = await response.json();
                 console.log(developerData);
 
-                // Emit event to refresh the list of developers
+                //emit to refresh the list of developers
                 this.$emit('fetch-developers');
 
-                // Reset the form
                 this.resetForm();
                 
                 const modalElement = document.getElementById('DeveloperModal');
                 const modal = bootstrap.Modal.getInstance(modalElement);
-                modal.hide(); // Close the modal
+                modal.hide();
 
             } catch (error) {
                 console.error('Error updating developer:', error);
