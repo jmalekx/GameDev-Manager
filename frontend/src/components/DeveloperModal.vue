@@ -4,7 +4,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="DeveloperModalLabel">{{ isEditing ? 'Edit Developer' : 'Add New Developer' }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" @click="closeModal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form @submit.prevent="submitForm">
@@ -36,14 +36,14 @@
                 </div>
             </div>
         </div>
-         <!-- Toast Notification -->
-         <div class="toast" id="successToast" role="alert" aria-live="assertive" aria-atomic="true" style="position: absolute; top: 20px; right: 20px; z-index: 1050;">
+
+        <div class="toast" id="successToast" role="alert" aria-live="assertive" aria-atomic="true" style="position: absolute; top: 20px; right: 20px; z-index: 1050;">
             <div class="toast-header">
                 <strong class="me-auto">Success</strong>
                 <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
             <div class="toast-body">
-                Developer added successfully!
+                Developer added/updated successfully!
             </div>
         </div>
     </div>
@@ -51,6 +51,7 @@
 
 <script>
 import { baseUrl } from '../main.js';
+
 export default {
     data() {
         return {
@@ -79,7 +80,7 @@ export default {
                     this.developer = { ...newVal }; // Deep clone to avoid mutation
                 } else {
                     this.isEditing = false;
-                    this.resetForm();
+                    this.resetForm(); // Reset the form for new developer
                 }
             }
         }
@@ -94,8 +95,13 @@ export default {
                 join_date: ''
             };
         },
+        closeModal() {
+            this.resetForm();
+        },
         async submitForm() {
-            const url = this.isEditing ? `${baseUrl}/api/developers/${this.developer.id}/` : `${baseUrl}/api/developers/`;
+            const url = this.isEditing 
+                ? `${baseUrl}/api/developers/${this.developer.id}/` 
+                : `${baseUrl}/api/developers/`;
             const method = this.isEditing ? 'PUT' : 'POST';
 
             try {
@@ -108,26 +114,22 @@ export default {
                 });
 
                 if (response.ok) {
-                    const developerData = await response.json();
-                    this.$emit('fetch-developers'); // Trigger parent to refresh the list
-                    this.resetForm(); // Reset form after submission
+                    await response.json(); // Optionally use the response if needed
+                    this.$emit('fetch-developers'); // Refresh the developer list
+                    this.resetForm(); // Reset the form fields
 
                     // Show success toast
                     const toastEl = document.getElementById('successToast');
                     const toast = new bootstrap.Toast(toastEl);
                     toast.show();
-
-                    // Close the modal after a short delay to allow the toast to be shown
-                    setTimeout(() => {
-                        this.$bvModal.hide('DeveloperModal'); // Close the modal
-                    }, 1000); // Adjust time as necessary
                 } else {
-                    console.error('Error:', response.statusText);
-                    // Handle error response (e.g., show a notification to the user)
+                    const errorText = await response.text(); // Get the response text to log
+                    console.error('Error updating developer:', errorText);
+                    alert(`Error updating developer: ${response.status} - ${response.statusText}. Please check server logs for more details.`);
                 }
             } catch (error) {
                 console.error('Fetch error:', error);
-                // Handle the fetch error (e.g., show a notification to the user)
+                alert('An error occurred while trying to update the developer.');
             }
         }
     }

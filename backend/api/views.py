@@ -43,7 +43,7 @@ def developer_api_view(request):
     elif request.method == 'PUT':
         #update existing
         data = json.loads(request.body)
-        developer = get_object_or_404(Developer, pk=data['id'])
+        developer = get_object_or_404(Developer, pk=data.get('id'))  # Fetch using 'id' from the request body
         developer.name = data.get('name', developer.name)
         developer.about = data.get('about', developer.about)
         developer.experience_years = data.get('experience_years', developer.experience_years)

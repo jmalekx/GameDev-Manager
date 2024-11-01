@@ -2,7 +2,7 @@
     <div>
         <div class="d-flex justify-content-between mb-3">
             <h3>Developer List</h3>
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#DeveloperModal">
+            <button type="button" class="btn btn-primary" @click="openAddModal">
                 Add New Developer
             </button>
         </div>
@@ -34,7 +34,7 @@
                         <button 
                             class="btn btn-sm btn me-2"
                             style="background-color: gold; color: white;"
-                            @click="editDeveloper(developer)"
+                            @click="openEditModal(developer)"
                         >
                             <i class="bi bi-pencil-square"></i>
                         </button>
@@ -49,7 +49,11 @@
                 </tr>
             </tbody>
         </table>
-        <DeveloperModal @fetch-developers="$emit('fetch-developers')" />
+        <DeveloperModal 
+            :developerToEdit="developerToEdit"
+            @fetch-developers="$emit('fetch-developers')"
+            @close-modal="closeModal"
+        />
     </div>
 </template>
 
@@ -67,37 +71,52 @@ export default {
             required: true,
         },
     },
+    data() {
+        return {
+            developerToEdit: null,
+        };
+    },
     methods: {
-        editDeveloper(developer) {
-            this.$emit('show-developer-modal', developer);
-            alert('Edit developer - not implemented');
+        openEditModal(developer) {
+            this.developerToEdit = developer; // Pass the selected developer for editing
+            this.$nextTick(() => {
+                const modal = new bootstrap.Modal(document.getElementById('DeveloperModal'));
+                modal.show();
+            });
+        },
+        openAddModal() {
+                    this.developerToEdit = null; // Reset to indicate new developer
+            this.$nextTick(() => {
+                const modal = new bootstrap.Modal(document.getElementById('DeveloperModal'));
+                modal.show();
+            });
+        },
+        closeModal() {
+            this.developerToEdit = null; // Reset when modal is closed
         },
         async deleteDeveloper(developer) {
-        if (confirm(`Are you sure you want to delete developer '${developer.name}'?`)) {
-            try {
-                const response = await fetch(`${baseUrl}/api/developers/${developer.id}/`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ id: developer.id }),
-                });
+            if (confirm(`Are you sure you want to delete developer '${developer.name}'?`)) {
+                try {
+                    const response = await fetch(`${baseUrl}/api/developers/${developer.id}/`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    });
 
-                if (response.ok) {
-                    alert(`Developer '${developer.name}' has been deleted.`);
-                    //emit to refresh the developer list after deletion
-                    this.$emit('fetch-developers');
-                } else {
-                    //handle error
-                    const errorData = await response.json();
-                    alert(`Error deleting developer: ${errorData.error}`);
+                    if (response.ok) {
+                        alert(`Developer '${developer.name}' has been deleted.`);
+                        this.$emit('fetch-developers'); // Refresh the developer list
+                    } else {
+                        const errorData = await response.json();
+                        alert(`Error deleting developer: ${errorData.error}`);
+                    }
+                } catch (error) {
+                    console.error('Error deleting developer:', error);
+                    alert('An error occurred while trying to delete the developer.');
                 }
-            } catch (error) {
-                console.error('Error deleting developer:', error);
-                alert('An error occurred while trying to delete the developer.');
             }
-        }
-    },
+        },
     },
 };
 </script>

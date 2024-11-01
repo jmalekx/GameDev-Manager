@@ -58,6 +58,7 @@
             return {
                 developers: [],
                 games: [],
+                developerToEdit: null,
             };
         },
         methods: {
