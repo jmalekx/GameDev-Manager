@@ -56,7 +56,14 @@ class Game(models.Model):
             'description': self.description,
             'release_date': self.release_date,
             'platform': self.get_platform_display(), 
-            'developers': [developer.name for developer in self.developer.all()] 
+             'developers': [
+                {
+                    'developer_name': gd.developer.name,
+                    'role': gd.role,
+                    'assigned_on': gd.assigned_on
+                }
+                for gd in self.gamedeveloper_set.all()
+            ]
         }
 
 class GameDeveloper(models.Model):
@@ -87,3 +94,4 @@ class GameDeveloper(models.Model):
 
     def __str__(self):
         return f"{self.developer.name} - {self.game.title} ({self.role})"
+        
