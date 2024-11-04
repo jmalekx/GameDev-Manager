@@ -58,6 +58,7 @@ class Game(models.Model):
             'platform': self.get_platform_display(), 
              'developers': [
                 {
+                    'developer_id': gd.developer.id,
                     'developer_name': gd.developer.name,
                     'role': gd.role,
                     'assigned_on': gd.assigned_on

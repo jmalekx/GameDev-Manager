@@ -2,7 +2,7 @@
     <div>
         <div class="d-flex justify-content-between mb-3">
             <h3>Game List</h3>
-            <button type="button" class="btn btn-primary" @click="openAddModal">
+            <button type="button" class="btn btn-primary" @click="openModal(null)">
                 Add New Game
             </button>
         </div>
@@ -31,28 +31,17 @@
                         </ul>
                     </td>
                     <td>
-                        <button 
-                            class="btn btn-sm btn me-2"
-                            style="background-color: gold; color: white;"
-                            @click="openEditModal(game)"
-                        >
+                        <button class="btn btn-sm me-2" style="background-color: gold; color: white;" @click="openModal(game)">
                             <i class="bi bi-pencil-square"></i>
                         </button>
-                        <button 
-                            class="btn btn-sm btn"
-                            style="background-color: crimson; color: white;" 
-                            @click="deleteGame(game)"
-                        >
+                        <button class="btn btn-sm" style="background-color: crimson; color: white;" @click="deleteGame(game)">
                             <i class="bi bi-trash"></i>
                         </button>
                     </td>
                 </tr>
             </tbody>
         </table>
-        <GameModal 
-            :gameToEdit="gameToEdit"
-            @fetch-games="$emit('fetch-games')"
-        />
+        <GameModal :gameToEdit="gameToEdit" @fetch-games="$emit('fetch-games')" />
     </div>
 </template>
 
@@ -61,30 +50,14 @@ import GameModal from './GameModal.vue';
 import { baseUrl } from '../main.js';
 
 export default {
-    components: {
-        GameModal,
-    },
-    props: {
-        games: {
-            type: Array,
-            required: true,
-        },
-    },
+    components: { GameModal },
+    props: { games: { type: Array, required: true } },
     data() {
-        return {
-            gameToEdit: null,
-        };
+        return { gameToEdit: null };
     },
     methods: {
-        openEditModal(game) {
+        openModal(game) {
             this.gameToEdit = game;
-            this.$nextTick(() => {
-                const modal = new bootstrap.Modal(document.getElementById('GameModal'));
-                modal.show();
-            });
-        },
-        openAddModal() {
-            this.gameToEdit = null;
             this.$nextTick(() => {
                 const modal = new bootstrap.Modal(document.getElementById('GameModal'));
                 modal.show();
@@ -95,13 +68,11 @@ export default {
                 try {
                     const response = await fetch(`${baseUrl}/api/games/${game.id}/`, {
                         method: 'DELETE',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
+                        headers: { 'Content-Type': 'application/json' },
                     });
 
                     if (response.ok) {
-                        this.$emit('fetch-games'); //refresh game list
+                        this.$emit('fetch-games');
                     } else {
                         const errorData = await response.json();
                         alert(`Error deleting game: ${errorData.error}`);
@@ -122,12 +93,12 @@ export default {
     }
     th {
         font-size: 1.25rem;
-        padding: 1rem; 
-        text-align: left; 
+        padding: 1rem;
+        text-align: left;
     }
     ul {
-        list-style-type: none; /* Remove bullets from list */
-        padding: 0; /* Remove padding */
-        margin: 0; /* Remove margin */
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
     }
 </style>

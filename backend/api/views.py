@@ -73,7 +73,7 @@ def developer_detail_view(request,developer_id):
 
 @csrf_exempt
 def game_api_view(request):
-    """Handle API requests for Game model."""
+    """Handle API requests for Game model"""
     if request.method == 'GET':
         return JsonResponse({
             'games': [game.as_dict() for game in Game.objects.all()]
@@ -81,18 +81,39 @@ def game_api_view(request):
     
     elif request.method == 'POST':
         data = json.loads(request.body)
+        developers_data = data.pop('developers', [])
         new_game = Game.objects.create(
             title=data['title'],
             description=data['description'],
             release_date=data['release_date'],
             platform=data['platform'],
         )
+        for dev_data in developers_data:
+            developer = get_object_or_404(Developer, pk=dev_data['id'])
+            GameDeveloper.objects.create(
+                game=new_game,
+                developer=developer,
+                role=dev_data.get('role', 'Unknown'),
+            )
+
         return JsonResponse(new_game.as_dict(), status=201)
 
     elif request.method == 'PUT':
         data = json.loads(request.body)
         game = get_object_or_404(Game, pk=data['id'])
         updated_game = update_instance(game, data)
+
+        game.gamedeveloper_set.all().delete()
+
+        developers_data = data.get('developers', [])
+        for dev_data in developers_data:
+            developer = get_object_or_404(Developer, pk=dev_data['id'])
+            GameDeveloper.objects.create(
+                game=game,
+                developer=developer,
+                role=dev_data.get('role', 'Unknown')
+            )
+
         return JsonResponse(updated_game.as_dict())
     
     elif request.method == 'DELETE':
@@ -101,4 +122,23 @@ def game_api_view(request):
         delete_instance(game)
         return JsonResponse({'message': 'Game deleted'}, status=204)
 
+    return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+@csrf_exempt
+def game_detail_view(request, game_id):
+    """Handle API requests for specific game"""
+    game = get_object_or_404(Game, id=game_id)
+
+    if request.method == 'GET':
+        return JsonResponse(game.as_dict())
+    
+    elif request.method == 'PUT':
+        data = json.loads(request.body)
+        updated_game = update_instance(game, data)
+        return JsonResponse(updated_game.as_dict())
+
+    elif request.method == 'DELETE':
+        game.delete()
+        return JsonResponse({'message': 'Game deleted successfully'}, status=204)
+    
     return JsonResponse({'error': 'Method not allowed'}, status=405)
