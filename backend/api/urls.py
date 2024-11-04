@@ -15,7 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.urls import path
-from .views import developer_api_view, game_api_view, developer_detail_view
+from .views import developer_api_view, game_api_view, developer_detail_view, game_detail_view
 
 
 urlpatterns = [
@@ -25,4 +25,5 @@ urlpatterns = [
     
     #game api endpoints
     path('games/', game_api_view, name='game api'),
+    path('games/<int:game_id>/', game_detail_view, name='game_detail'),
 ]
