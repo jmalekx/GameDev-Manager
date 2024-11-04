@@ -8,7 +8,7 @@
         </div>
         <table class="table">
             <thead>
-                <tr>
+                <tr class="align-middle fs-5 py-3">
                     <th scope="col">#</th>
                     <th scope="col">Name</th>
                     <th scope="col">About</th>
@@ -19,7 +19,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="(developer, index) in developers" :key="developer.id">
+                <tr v-for="(developer, index) in developers" :key="developer.id" class="align-middle">
                     <th scope="row">{{ index + 1 }}</th>
                     <td>{{ developer.name }}</td>
                     <td>{{ developer.about }}</td>
@@ -29,7 +29,9 @@
                         </span>
                     </td>
                     <td>
-                        <span class="badge" :class="developer.available_to_hire ? 'bg-available' : 'bg-unavailable'">
+                        <span class="badge" 
+                        :class="developer.available_to_hire ? 'bg-available' : 'bg-unavailable'" 
+                        :style="{ backgroundColor: developer.available_to_hire ? '#a8e6cf' : '#ffabab', color: '#333' }">
                             {{ developer.available_to_hire ? 'Yes' : 'No' }}
                         </span>
                     </td>
@@ -119,22 +121,3 @@ export default {
     },
 };
 </script>
-
-<style scoped>
-    td, th {
-        vertical-align: middle;
-    }
-    th {
-        font-size: 1.25rem;
-        padding: 1rem; 
-        text-align: left; 
-    }
-    .bg-available {
-        background-color: #a8e6cf;
-        color: #333;
-    }
-    .bg-unavailable {
-        background-color: #ffabab; 
-        color: #333; 
-    }
-</style>

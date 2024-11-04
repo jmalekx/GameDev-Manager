@@ -8,7 +8,7 @@
         </div>
         <table class="table">
             <thead>
-                <tr>
+                <tr class="align-middle fs-5 py-3">
                     <th scope="col">#</th>
                     <th scope="col">Title</th>
                     <th scope="col">Description</th>
@@ -19,14 +19,14 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="(game, index) in games" :key="game.id">
+                <tr v-for="(game, index) in games" :key="game.id" class="align-middle">
                     <th scope="row">{{ index + 1 }}</th>
                     <td>{{ game.title }}</td>
                     <td>{{ game.description }}</td>
                     <td>{{ game.release_date }}</td>
                     <td>{{ game.platform_display }}</td>
                     <td>
-                        <ul>
+                        <ul class="list-unstyled m-0 p-0">
                             <li v-for="(developer, index) in game.developers" :key="index">
                                 {{ developer.developer_name }} ({{ developer.role }})
                             </li>
@@ -119,19 +119,3 @@ export default {
     },
 };
 </script>
-
-<style scoped>
-    td, th {
-        vertical-align: middle;
-    }
-    th {
-        font-size: 1.25rem;
-        padding: 1rem; 
-        text-align: middle; 
-    }
-    ul {
-        list-style-type: none; /*remove bullets from list */
-        padding: 0; /*remove padding */
-        margin: 0; /*remove margin */
-    }
-</style>
