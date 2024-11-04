@@ -24,7 +24,7 @@
                     <td>{{ game.title }}</td>
                     <td>{{ game.description }}</td>
                     <td>{{ game.release_date }}</td>
-                    <td>{{ game.platform }}</td>
+                    <td>{{ game.platform_display }}</td>
                     <td>
                         <ul>
                             <li v-for="(developer, index) in game.developers" :key="index">
