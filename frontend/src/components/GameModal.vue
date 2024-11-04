@@ -233,7 +233,7 @@ export default { //vue options api usage= data,methods,props
 </script>
 
 <style scoped>
-#dev {
-    margin-right: 1rem;
-}
+    #dev {
+        margin-right: 1rem;
+    }
 </style>
