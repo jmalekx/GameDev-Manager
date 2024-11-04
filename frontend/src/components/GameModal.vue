@@ -138,21 +138,40 @@ export default {
             this.form.developers.splice(index, 1);
         },
         async submitForm() {
+            const method = this.gameToEdit ? 'PUT' : 'POST'; // Determine method
+            const url = this.gameToEdit 
+                ? `${baseUrl}/api/games/${this.gameToEdit.id}/` 
+                : `${baseUrl}/api/games/`;
+
+            const dataToSend = {
+                title: this.form.title,
+                description: this.form.description,
+                release_date: this.form.release_date,
+                platform: this.form.platform,
+                developers: this.form.developers.map(dev => ({
+                    developer_id: dev.developer_id,
+                    role: dev.role,
+                })),
+            };
+
             try {
-                if (this.gameToEdit) {
-                    // Add the id of the game being edited to the form data
-                    this.form.id = this.gameToEdit.id;
-                    await this.editGame();
-                } else {
-                    await this.addGame();
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(dataToSend),
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
                 }
-                // Emit event to refresh the games list
-                this.$emit('fetch-games');
+
+                this.$emit('fetch-games'); // Refresh the game list
                 this.resetForm();
-
-                // Close the modal
-                this.closeModal();
-
+                const modalElement = document.getElementById('GameModal');
+                const modal = bootstrap.Modal.getInstance(modalElement);
+                modal.hide();
             } catch (error) {
                 console.error('Error submitting game:', error);
             }

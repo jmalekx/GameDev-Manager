@@ -87,6 +87,16 @@ def game_api_view(request):
             release_date=data['release_date'],
             platform=data['platform'],
         )
+
+        # Now handle the developers
+        if 'developers' in data:
+            for dev in data['developers']:
+                GameDeveloper.objects.create(
+                    game=new_game,
+                    developer_id=dev['developer_id'],  # Ensure this matches the structure
+                    role=dev['role']
+                )
+
         return JsonResponse(new_game.as_dict(), status=201)
 
     elif request.method == 'PUT':
