@@ -53,8 +53,10 @@
         </table>
         <GameModal 
             :gameToEdit="gameToEdit"
-            @fetch-games="$emit('fetch-games')"
-        />
+            @fetch-games="$emit('fetch-games')" 
+        /> <!--component used to bind gameToEdit data to component to be pre-filled or blank
+                listens for fetchgame event and re-emits to parent to trigger list refresh -->
+
     </div>
 </template>
 
@@ -66,21 +68,21 @@ export default {
     components: {
         GameModal,
     },
-    props: {
+    props: { //passed from parent required to display list in table
         games: {
             type: Array,
             required: true,
         },
     },
-    data() {
+    data() { //holds game object being edited (editmode basically, used in modal)
         return {
             gameToEdit: null,
         };
     },
     methods: {
         openEditModal(game) {
-            this.gameToEdit = game;
-            this.$nextTick(() => {
+            this.gameToEdit = game; //allowing gamemodal to prefill form fields with data
+            this.$nextTick(() => { //ensure DOM updated before modal show
                 const modal = new bootstrap.Modal(document.getElementById('GameModal'));
                 modal.show();
             });
@@ -103,7 +105,7 @@ export default {
                     });
 
                     if (response.ok) {
-                        this.$emit('fetch-games'); //refresh game list
+                        this.$emit('fetch-games'); //refresh game list after deleting
                     } else {
                         const errorData = await response.json();
                         alert(`Error deleting game: ${errorData.error}`);
@@ -125,11 +127,11 @@ export default {
     th {
         font-size: 1.25rem;
         padding: 1rem; 
-        text-align: left; 
+        text-align: middle; 
     }
     ul {
-        list-style-type: none; /* Remove bullets from list */
-        padding: 0; /* Remove padding */
-        margin: 0; /* Remove margin */
+        list-style-type: none; /*remove bullets from list */
+        padding: 0; /*remove padding */
+        margin: 0; /*remove margin */
     }
 </style>

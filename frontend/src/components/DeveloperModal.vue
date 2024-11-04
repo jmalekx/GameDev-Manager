@@ -43,7 +43,7 @@
 import { baseUrl } from '../main.js';
 
 export default {
-    data() {
+    data() { 
         return {
             developer: {
                 name: '',
@@ -67,7 +67,7 @@ export default {
             handler(newVal) {
                 if (newVal) {
                     this.isEditing = true;
-                    this.developer = { ...newVal }; //deep clone to avoid mutation
+                    this.developer = { ...newVal }
                 } else {
                     this.isEditing = false;
                     this.resetForm(); //reset the form for new developer

@@ -73,7 +73,7 @@ def developer_detail_view(request,developer_id):
 
 @csrf_exempt
 def game_api_view(request):
-    """Handle API requests for Game model."""
+    """Handle API requests for Game model"""
     if request.method == 'GET':
         return JsonResponse({
             'games': [game.as_dict() for game in Game.objects.all()]
@@ -88,12 +88,12 @@ def game_api_view(request):
             platform=data['platform'],
         )
 
-        # Now handle the developers
+        #handling developers in through
         if 'developers' in data:
             for dev in data['developers']:
                 GameDeveloper.objects.create(
                     game=new_game,
-                    developer_id=dev['developer_id'],  # Ensure this matches the structure
+                    developer_id=dev['developer_id'],
                     role=dev['role']
                 )
 
@@ -115,7 +115,7 @@ def game_api_view(request):
 
 @csrf_exempt
 def game_detail_view(request, game_id):
-    """Handle API requests for a specific Game."""
+    """Handle API requests for specific Game"""
     game = get_object_or_404(Game, id=game_id)
 
     if request.method == 'GET':
@@ -126,11 +126,11 @@ def game_detail_view(request, game_id):
         updated_game = update_instance(game, data)
 
         if 'developers' in data:
-            game.gamedeveloper_set.all().delete()  # Clear existing developers
+            game.gamedeveloper_set.all().delete() #clear existing
             for dev in data['developers']:
                 GameDeveloper.objects.create(
                     game=game,
-                    developer_id=dev['developer_id'],  # Ensure this matches the structure
+                    developer_id=dev['developer_id'],
                     role=dev['role']
                 )
 

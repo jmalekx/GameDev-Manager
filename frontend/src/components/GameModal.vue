@@ -2,24 +2,31 @@
     <div class="modal fade" id="GameModal" tabindex="-1" aria-labelledby="GameModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
+                <!--header-->
                 <div class="modal-header">
                     <h5 class="modal-title" id="GameModalLabel">{{ gameToEdit ? 'Edit Game' : 'Add New Game' }}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
+
+                <!--vody-->
                 <div class="modal-body">
                     <form @submit.prevent="submitForm">
+                        <!--title input-->
                         <div class="mb-3">
                             <label for="title" class="form-label">Title</label>
                             <input type="text" id="title" v-model="form.title" class="form-control" required>
                         </div>
+                        <!--desc input-->
                         <div class="mb-3">
                             <label for="description" class="form-label">Description</label>
                             <textarea id="description" v-model="form.description" class="form-control" required></textarea>
                         </div>
+                        <!--date input-->
                         <div class="mb-3">
                             <label for="release_date" class="form-label">Release Date</label>
                             <input type="date" id="release_date" v-model="form.release_date" class="form-control" required>
                         </div>
+                        <!--select platform-->
                         <div class="mb-3">
                             <label for="platform" class="form-label">Platform</label>
                             <select id="platform" v-model="form.platform" class="form-select" required>
@@ -29,28 +36,34 @@
                             </select>
                         </div>
 
+                        <!--developers-->
                         <div class="mb-3">
                             <label class="form-label">Developers</label>
                             <div v-for="(developer, index) in form.developers" :key="index" class="d-flex mb-2">
+                                <!--dev selection-->
                                 <select v-model="developer.developer_id" class="form-select me-2" required>
                                     <option v-for="dev in developers" :key="dev.id" :value="dev.id">
-                                        {{ dev.name }}  <!-- Ensure this is the correct property for the developer's name -->
+                                        {{ dev.name }}
                                     </option>
                                 </select>
+                                <!--role selection-->
                                 <select v-model="developer.role" class="form-select" required>
                                     <option v-for="role in roles" :key="role.value" :value="role.value">
                                         {{ role.label }}
                                     </option>
                                 </select>
+                                <!--remove button-->
                                 <button type="button" class="btn btn-danger btn-sm ms-2" @click="removeDeveloper(index)">
                                     Remove
                                 </button>
                             </div>
+                            <!--add dev button-->
                             <button type="button" class="btn btn-secondary btn-sm" @click="addDeveloper">
                                 Add Developer
                             </button>
                         </div>
-
+                        
+                        <!--submit button-->
                         <button type="submit" class="btn btn-primary mt-3">
                             {{ gameToEdit ? 'Save Changes' : 'Add Game' }}
                         </button>
@@ -64,16 +77,16 @@
 <script>
 import { baseUrl } from '../main.js';
 
-export default {
-    props: {
+export default { //vue options api usage= data,methods,props
+    props: { //receive gameToEdit prop to determine if editing or adding game
         gameToEdit: {
             type: Object,
             default: null,
         },
     },
-    data() {
-        return {
-            developers: [], // List of developers fetched from the API
+    data() { 
+        return { //arrays for dropdown choices and form data
+            developers: [],
             roles: [
                 { value: 'Level Designer', label: 'Level Designer' },
                 { value: 'Programmer', label: 'Programmer' },
@@ -92,12 +105,12 @@ export default {
                 title: '',
                 description: '',
                 release_date: '',
-                platform: 'PC', // Default value
+                platform: '',
                 developers: [],
             },
         };
     },
-    watch: {
+    watch: { //watches gameToEdit to populate/reset form if editing or not
         gameToEdit: {
             immediate: true,
             handler(newVal) {
@@ -116,18 +129,18 @@ export default {
             },
         },
     },
-    methods: {
+    methods: { //fetch dev options from api
         async fetchDevelopers() {
             const response = await fetch(`${baseUrl}/api/developers/`);
             const data = await response.json();
-            this.developers = data.developers; // Ensure developer names are correctly populated
+            this.developers = data.developers; 
         },
-        resetForm() {
+        resetForm() { //reset to empty for new game
             this.form = {
                 title: '',
                 description: '',
                 release_date: '',
-                platform: 'PC', // Default value
+                platform: '', 
                 developers: [],
             };
         },
@@ -167,7 +180,7 @@ export default {
                     throw new Error('Network response was not ok');
                 }
 
-                this.$emit('fetch-games'); // Refresh the game list
+                this.$emit('fetch-games'); //emit to refresh the game list
                 this.resetForm();
                 const modalElement = document.getElementById('GameModal');
                 const modal = bootstrap.Modal.getInstance(modalElement);

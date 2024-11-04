@@ -75,7 +75,7 @@
             },
         },
         mounted() {
-            this.fetchDevelopers(); // Fetch developers on initial load
+            this.fetchDevelopers(); //fetch on initial load
         }
     };
 </script>
