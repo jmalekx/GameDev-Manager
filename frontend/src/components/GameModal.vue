@@ -38,7 +38,7 @@
 
                         <!--developers-->
                         <div class="mb-3">
-                            <label class="form-label">Developers</label>
+                            <label class="form-label" id="dev">Developers</label>
                             <div v-for="(developer, index) in form.developers" :key="index" class="d-flex mb-2">
                                 <!--dev selection-->
                                 <select v-model="developer.developer_id" class="form-select me-2" required>
@@ -62,7 +62,7 @@
                                 Add Developer
                             </button>
                         </div>
-                        
+
                         <!--submit button-->
                         <button type="submit" class="btn btn-primary mt-3">
                             {{ gameToEdit ? 'Save Changes' : 'Add Game' }}
@@ -83,6 +83,7 @@ export default { //vue options api usage= data,methods,props
             type: Object,
             default: null,
         },
+        developers: Array,
     },
     data() { 
         return { //arrays for dropdown choices and form data
@@ -115,14 +116,16 @@ export default { //vue options api usage= data,methods,props
             immediate: true,
             handler(newVal) {
                 if (newVal) {
-                    this.form.title = newVal.title;
-                    this.form.description = newVal.description;
-                    this.form.release_date = newVal.release_date;
-                    this.form.platform = newVal.platform; // Use the stored value for editing
-                    this.form.developers = newVal.developers.map(developer => ({
-                        developer_id: developer.developer_id || developer.id,
-                        role: developer.role,
-                    }));
+                    this.form = {
+                        title: newVal.title,
+                        description: newVal.description,
+                        release_date: newVal.release_date,
+                        platform: newVal.platform,
+                        developers: newVal.developers.map(dev => ({
+                            developer_id: dev.developer_id,
+                            role: dev.role,
+                        })),
+                    };
                 } else {
                     this.resetForm();
                 }
@@ -230,5 +233,7 @@ export default { //vue options api usage= data,methods,props
 </script>
 
 <style scoped>
-/* Custom styles */
+#dev {
+    margin-right: 1rem;
+}
 </style>

@@ -10,13 +10,13 @@
         <ul class="nav nav-tabs mb-4" id="modelTabs" role="tablist">
             <li class="nav-item">
                 <button class="nav-link active" id="developers-tab" data-bs-toggle="tab" data-bs-target="#developers"
-                    type="button" role="tab" aria-controls="developers" aria-selected="true" @click="fetchDevelopers">
+                    type="button" role="tab" aria-controls="developers" aria-selected="true" @click="setActiveTab('developers')">
                     Developers
                 </button>
             </li>
             <li class="nav-item">
                 <button class="nav-link" id="games-tab" data-bs-toggle="tab" data-bs-target="#games" type="button"
-                    role="tab" aria-controls="games" aria-selected="false" @click="fetchGames">
+                    role="tab" aria-controls="games" aria-selected="false" @click="setActiveTab('games')">
                     Games
                 </button>
             </li>
@@ -27,6 +27,7 @@
             <!-- Developer Tab -->
             <div class="tab-pane fade show active" id="developers" role="tabpanel" aria-labelledby="developers-tab">
                 <DeveloperTable 
+                    v-if="activeTab === 'developers'" 
                     :developers="developers" 
                     @fetch-developers="fetchDevelopers" 
                 />
@@ -35,6 +36,7 @@
             <!-- Game Tab -->
             <div class="tab-pane fade" id="games" role="tabpanel" aria-labelledby="games-tab">
                 <GameTable
+                    v-if="activeTab === 'games'" 
                     :games="games" 
                     @fetch-games="fetchGames" 
                 />
@@ -56,6 +58,7 @@
         },
         data() {
             return {
+                activeTab: 'developers',
                 developers: [],
                 games: [],
                 developerToEdit: null,
@@ -63,6 +66,14 @@
             };
         },
         methods: {
+            setActiveTab(tab) { //check which tab is active to fetch data (e.g if add new dev, make sure it is updated when you go to games)
+                this.activeTab = tab;
+                if (tab === 'games') {
+                    this.fetchGames();
+                } else if (tab === 'developers') {
+                    this.fetchDevelopers();
+                }
+            },
             async fetchDevelopers() {
                 const response = await fetch(`${baseUrl}/api/developers/`);
                 const data = await response.json();
@@ -75,7 +86,7 @@
             },
         },
         mounted() {
-            this.fetchDevelopers(); //fetch on initial load
+            this.fetchDevelopers(); // Fetch developers on initial load
         }
     };
 </script>
