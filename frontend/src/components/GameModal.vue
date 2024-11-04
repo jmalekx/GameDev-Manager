@@ -38,7 +38,7 @@
 
                         <!--developers-->
                         <div class="mb-3">
-                            <label class="form-label" id="dev">Developers</label>
+                            <label class="form-label me-3">Developers</label>
                             <div v-for="(developer, index) in form.developers" :key="index" class="d-flex mb-2">
                                 <!--dev selection-->
                                 <select v-model="developer.developer_id" class="form-select me-2" required>
@@ -231,9 +231,3 @@ export default { //vue options api usage= data,methods,props
     },
 };
 </script>
-
-<style scoped>
-    #dev {
-        margin-right: 1rem;
-    }
-</style>

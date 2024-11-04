@@ -133,9 +133,3 @@ export default {
 
 };
 </script>
-
-<style scoped>
-.modal-body {
-    padding: 20px;
-}
-</style>
