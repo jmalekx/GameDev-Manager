@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
-from .models import Developer, Game
+from .models import Developer, Game, GameDeveloper
 from django.views.decorators.csrf import csrf_exempt
 import json
 
@@ -114,20 +114,19 @@ def game_detail_view(request, game_id):
     elif request.method == 'PUT':
         data = json.loads(request.body)
         updated_game = update_instance(game, data)
-        
+
         if 'developers' in data:
             game.gamedeveloper_set.all().delete()  # Clear existing developers
             for dev in data['developers']:
                 GameDeveloper.objects.create(
                     game=game,
-                    developer_id=dev['id'],
+                    developer_id=dev['developer_id'],  # Ensure this matches the structure
                     role=dev['role']
                 )
-        
+
         return JsonResponse(updated_game.as_dict())
 
     elif request.method == 'DELETE':
-        # Delete the game instance
         game.delete()
         return JsonResponse({'message': 'Game deleted successfully'}, status=204)
 

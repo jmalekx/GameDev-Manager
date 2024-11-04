@@ -135,6 +135,8 @@ export default {
         async submitForm() {
             try {
                 if (this.gameToEdit) {
+                    // Add the id of the game being edited to the form data
+                    this.form.id = this.gameToEdit.id;
                     await this.editGame();
                 } else {
                     await this.addGame();
