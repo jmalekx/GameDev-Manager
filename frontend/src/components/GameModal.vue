@@ -23,9 +23,9 @@
                         <div class="mb-3">
                             <label for="platform" class="form-label">Platform</label>
                             <select id="platform" v-model="form.platform" class="form-select" required>
-                                <option value="PC">Computer/Laptop</option>
-                                <option value="Console">Console</option>
-                                <option value="Mobile">Android/iOS</option>
+                                <option value="PC" :selected="form.platform === 'PC'">Computer/Laptop</option>
+                                <option value="Console" :selected="form.platform === 'Console'">Console</option>
+                                <option value="Mobile" :selected="form.platform === 'Mobile'">Android/iOS</option>
                             </select>
                         </div>
 
@@ -87,7 +87,7 @@ export default {
                 title: '',
                 description: '',
                 release_date: '',
-                platform: 'PC',
+                platform: 'PC', // Default value
                 developers: [],
             },
         };
@@ -97,7 +97,14 @@ export default {
             immediate: true,
             handler(newVal) {
                 if (newVal) {
-                    this.form = { ...newVal }; // Directly copy gameToEdit object
+                    this.form.title = newVal.title;
+                    this.form.description = newVal.description;
+                    this.form.release_date = newVal.release_date;
+                    this.form.platform = newVal.platform; // Ensure platform is populated
+                    this.form.developers = newVal.developers.map(developer => ({
+                        developer_id: developer.developer_id, // Ensure this property matches your API response
+                        role: developer.role,
+                    }));
                 } else {
                     this.resetForm();
                 }
@@ -108,7 +115,7 @@ export default {
         async fetchDevelopers() {
             const response = await fetch(`${baseUrl}/api/developers/`);
             const data = await response.json();
-            this.developers = data.developers;
+            this.developers = data.developers; // Ensure developer names are correctly populated
         },
         resetForm() {
             this.form = {
@@ -126,14 +133,22 @@ export default {
             this.form.developers.splice(index, 1);
         },
         async submitForm() {
-            if (this.gameToEdit) {
-                await this.editGame();
-            } else {
-                await this.addGame();
+            try {
+                if (this.gameToEdit) {
+                    await this.editGame();
+                } else {
+                    await this.addGame();
+                }
+                // Emit event to refresh the games list
+                this.$emit('fetch-games');
+                this.resetForm();
+
+                // Close the modal
+                this.closeModal();
+
+            } catch (error) {
+                console.error('Error submitting game:', error);
             }
-            this.$emit('fetch-games');
-            this.resetForm();
-            this.closeModal();
         },
         async editGame() {
             const response = await fetch(`${baseUrl}/api/games/${this.gameToEdit.id}/`, {
@@ -145,6 +160,7 @@ export default {
             });
             if (!response.ok) {
                 console.error('Error editing game:', await response.text());
+                throw new Error('Edit failed');
             }
         },
         async addGame() {
@@ -157,11 +173,15 @@ export default {
             });
             if (!response.ok) {
                 console.error('Error adding game:', await response.text());
+                throw new Error('Add failed');
             }
         },
         closeModal() {
-            const modal = new bootstrap.Modal(document.getElementById('GameModal'));
-            modal.hide();
+            const modalElement = document.getElementById('GameModal');
+            const modal = bootstrap.Modal.getInstance(modalElement);
+            if (modal) {
+                modal.hide();
+            }
         },
     },
     mounted() {
