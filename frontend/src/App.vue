@@ -59,6 +59,7 @@
                 developers: [],
                 games: [],
                 developerToEdit: null,
+                gameToEdit: null,
             };
         },
         methods: {
@@ -68,7 +69,7 @@
                 this.developers = data.developers;
             },
             async fetchGames() {
-                const response = await fetch(`${baseUrl}/api/developers/`);
+                const response = await fetch(`${baseUrl}/api/games/`);
                 const data = await response.json();
                 this.games = data.games;
             },
