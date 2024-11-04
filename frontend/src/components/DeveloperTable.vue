@@ -11,8 +11,10 @@
                 <tr>
                     <th scope="col">#</th>
                     <th scope="col">Name</th>
+                    <th scope="col">About</th>
                     <th scope="col">Experience</th>
                     <th scope="col">Availability</th>
+                    <th scope="col">Join Date</th>
                     <th scope="col">Actions</th>
                 </tr>
             </thead>
@@ -20,6 +22,7 @@
                 <tr v-for="(developer, index) in developers" :key="developer.id">
                     <th scope="row">{{ index + 1 }}</th>
                     <td>{{ developer.name }}</td>
+                    <td>{{ developer.about }}</td>
                     <td>
                         <span class="badge bg-secondary">
                             {{ developer.experience_years }} years
@@ -30,6 +33,7 @@
                             {{ developer.available_to_hire ? 'Yes' : 'No' }}
                         </span>
                     </td>
+                    <td>{{ developer.join_date }}</td>
                     <td>
                         <button 
                             class="btn btn-sm btn me-2"
