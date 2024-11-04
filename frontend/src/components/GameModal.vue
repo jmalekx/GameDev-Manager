@@ -23,9 +23,9 @@
                         <div class="mb-3">
                             <label for="platform" class="form-label">Platform</label>
                             <select id="platform" v-model="form.platform" class="form-select" required>
-                                <option value="PC" :selected="form.platform === 'PC'">Computer/Laptop</option>
-                                <option value="Console" :selected="form.platform === 'Console'">Console</option>
-                                <option value="Mobile" :selected="form.platform === 'Mobile'">Android/iOS</option>
+                                <option v-for="platform in platformChoices" :key="platform.value" :value="platform.value">
+                                    {{ platform.label }}
+                                </option>
                             </select>
                         </div>
 
@@ -34,7 +34,7 @@
                             <div v-for="(developer, index) in form.developers" :key="index" class="d-flex mb-2">
                                 <select v-model="developer.developer_id" class="form-select me-2" required>
                                     <option v-for="dev in developers" :key="dev.id" :value="dev.id">
-                                        {{ dev.name }}
+                                        {{ dev.name }}  <!-- Ensure this is the correct property for the developer's name -->
                                     </option>
                                 </select>
                                 <select v-model="developer.role" class="form-select" required>
@@ -83,6 +83,11 @@ export default {
                 { value: 'Project Manager', label: 'Project Manager' },
                 { value: 'UI/UX Designer', label: 'UI/UX Designer' },
             ],
+            platformChoices: [
+                { value: 'PC', label: 'Computer/Laptop' },
+                { value: 'Console', label: 'Console' },
+                { value: 'Mobile', label: 'Android/iOS' },
+            ],
             form: {
                 title: '',
                 description: '',
@@ -100,9 +105,9 @@ export default {
                     this.form.title = newVal.title;
                     this.form.description = newVal.description;
                     this.form.release_date = newVal.release_date;
-                    this.form.platform = newVal.platform; // Ensure platform is populated
+                    this.form.platform = newVal.platform; // Use the stored value for editing
                     this.form.developers = newVal.developers.map(developer => ({
-                        developer_id: developer.developer_id, // Ensure this property matches your API response
+                        developer_id: developer.developer_id || developer.id,
                         role: developer.role,
                     }));
                 } else {
@@ -122,7 +127,7 @@ export default {
                 title: '',
                 description: '',
                 release_date: '',
-                platform: 'PC',
+                platform: 'PC', // Default value
                 developers: [],
             };
         },

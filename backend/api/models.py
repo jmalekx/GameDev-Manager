@@ -48,16 +48,19 @@ class Game(models.Model):
 
     def __str__(self):
         return f"{self.title} ({self.get_platform_display()})"
-    
+
+
     def as_dict(self):
         return {
             'id': self.id,
             'title': self.title,
             'description': self.description,
             'release_date': self.release_date,
-            'platform': self.get_platform_display(), 
-             'developers': [
+            'platform': self.platform,  # Keep the stored value for editing
+            'platform_display': self.get_platform_display(),  # Optional: Human-readable version
+            'developers': [
                 {
+                    'developer_id': gd.developer.id,
                     'developer_name': gd.developer.name,
                     'role': gd.role,
                     'assigned_on': gd.assigned_on
