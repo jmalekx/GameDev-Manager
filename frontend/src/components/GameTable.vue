@@ -11,6 +11,7 @@
                 <tr>
                     <th scope="col">#</th>
                     <th scope="col">Title</th>
+                    <th scope="col">Description</th>
                     <th scope="col">Release Date</th>
                     <th scope="col">Platform</th>
                     <th scope="col">Developers</th>
@@ -21,6 +22,7 @@
                 <tr v-for="(game, index) in games" :key="game.id">
                     <th scope="row">{{ index + 1 }}</th>
                     <td>{{ game.title }}</td>
+                    <td>{{ game.description }}</td>
                     <td>{{ game.release_date }}</td>
                     <td>{{ game.platform }}</td>
                     <td>

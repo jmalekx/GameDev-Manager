@@ -30,14 +30,28 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="developers" class="form-label">Developers</label>
-                            <select multiple v-model="form.developer_ids" class="form-select" required>
-                                <option v-for="developer in developers" :key="developer.id" :value="developer.id">
-                                    {{ developer.name }}
-                                </option>
-                            </select>
+                            <label class="form-label">Developers</label>
+                            <div v-for="(developer, index) in form.developers" :key="index" class="d-flex mb-2">
+                                <select v-model="developer.developer_id" class="form-select me-2" required>
+                                    <option v-for="dev in developers" :key="dev.id" :value="dev.id">
+                                        {{ dev.name }}
+                                    </option>
+                                </select>
+                                <select v-model="developer.role" class="form-select" required>
+                                    <option v-for="role in roles" :key="role.value" :value="role.value">
+                                        {{ role.label }}
+                                    </option>
+                                </select>
+                                <button type="button" class="btn btn-danger btn-sm ms-2" @click="removeDeveloper(index)">
+                                    Remove
+                                </button>
+                            </div>
+                            <button type="button" class="btn btn-secondary btn-sm" @click="addDeveloper">
+                                Add Developer
+                            </button>
                         </div>
-                        <button type="submit" class="btn btn-primary">
+
+                        <button type="submit" class="btn btn-primary mt-3">
                             {{ gameToEdit ? 'Save Changes' : 'Add Game' }}
                         </button>
                     </form>
@@ -59,13 +73,22 @@ export default {
     },
     data() {
         return {
-            developers: [], // to hold the list of developers
+            developers: [], // List of developers fetched from the API
+            roles: [
+                { value: 'Level Designer', label: 'Level Designer' },
+                { value: 'Programmer', label: 'Programmer' },
+                { value: 'Artist', label: 'Artist' },
+                { value: 'Animator', label: 'Animator' },
+                { value: 'Sound Designer', label: 'Sound Designer' },
+                { value: 'Project Manager', label: 'Project Manager' },
+                { value: 'UI/UX Designer', label: 'UI/UX Designer' },
+            ],
             form: {
                 title: '',
                 description: '',
                 release_date: '',
-                platform: 'PC', // default platform
-                developer_ids: [], // array to hold selected developer IDs
+                platform: 'PC',
+                developers: [],
             },
         };
     },
@@ -92,14 +115,23 @@ export default {
             this.form.description = game.description;
             this.form.release_date = game.release_date;
             this.form.platform = game.platform;
-            this.form.developer_ids = game.developers.map(developer => developer.developer_id);
+            this.form.developers = game.developers.map(developer => ({
+                developer_id: developer.developer_id,
+                role: developer.role,
+            }));
         },
         resetForm() {
             this.form.title = '';
             this.form.description = '';
             this.form.release_date = '';
             this.form.platform = 'PC';
-            this.form.developer_ids = [];
+            this.form.developers = [];
+        },
+        addDeveloper() {
+            this.form.developers.push({ developer_id: '', role: 'Level Designer' });
+        },
+        removeDeveloper(index) {
+            this.form.developers.splice(index, 1);
         },
         async submitForm() {
             if (this.gameToEdit) {
@@ -117,10 +149,7 @@ export default {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    ...this.form,
-                    developer_ids: this.form.developer_ids, // Include developer IDs for editing
-                }),
+                body: JSON.stringify(this.form),
             });
             if (!response.ok) {
                 console.error('Error editing game:', await response.text());
@@ -144,11 +173,11 @@ export default {
         },
     },
     mounted() {
-        this.fetchDevelopers(); // Fetch developers when the component is mounted
+        this.fetchDevelopers();
     },
 };
 </script>
 
 <style scoped>
-/* Add your styles here */
+/* Custom styles */
 </style>
