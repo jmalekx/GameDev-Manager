@@ -97,7 +97,7 @@ export default {
             immediate: true,
             handler(newVal) {
                 if (newVal) {
-                    this.populateForm(newVal);
+                    this.form = { ...newVal }; // Directly copy gameToEdit object
                 } else {
                     this.resetForm();
                 }
@@ -110,22 +110,14 @@ export default {
             const data = await response.json();
             this.developers = data.developers;
         },
-        populateForm(game) {
-            this.form.title = game.title;
-            this.form.description = game.description;
-            this.form.release_date = game.release_date;
-            this.form.platform = game.platform;
-            this.form.developers = game.developers.map(developer => ({
-                developer_id: developer.developer_id,
-                role: developer.role,
-            }));
-        },
         resetForm() {
-            this.form.title = '';
-            this.form.description = '';
-            this.form.release_date = '';
-            this.form.platform = 'PC';
-            this.form.developers = [];
+            this.form = {
+                title: '',
+                description: '',
+                release_date: '',
+                platform: 'PC',
+                developers: [],
+            };
         },
         addDeveloper() {
             this.form.developers.push({ developer_id: '', role: 'Level Designer' });
