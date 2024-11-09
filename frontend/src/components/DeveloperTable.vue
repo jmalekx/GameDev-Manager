@@ -1,9 +1,9 @@
 <template>
     <div>
         <div class="d-flex justify-content-between mb-3">
-            <h3>Developer List</h3>
-            <button type="button" class="btn btn-primary" @click="openAddModal">
-                Add New Developer
+            <h3 class="text fw-bold">Developers</h3>
+            <button type="button" class="btn btn-success btn-lg" @click="openAddModal">
+                <i class="bi bi-plus-circle me-2"></i>Add New Developer
             </button>
         </div>
         <table class="table">
@@ -30,23 +30,20 @@
                     </td>
                     <td>
                         <span class="badge" 
-                        :class="developer.available_to_hire ? 'bg-available' : 'bg-unavailable'" 
-                        :style="{ backgroundColor: developer.available_to_hire ? '#a8e6cf' : '#ffabab', color: '#333' }">
+                            :class="developer.available_to_hire ? 'bg-success text-dark' : 'bg-danger text-dark'">
                             {{ developer.available_to_hire ? 'Yes' : 'No' }}
                         </span>
                     </td>
                     <td>{{ developer.join_date }}</td>
                     <td>
                         <button 
-                            class="btn btn-sm btn me-2"
-                            style="background-color: gold; color: white;"
+                            class="btn btn-sm btn-warning me-2"
                             @click="openEditModal(developer)"
                         >
                             <i class="bi bi-pencil-square"></i>
                         </button>
                         <button 
-                            class="btn btn-sm btn"
-                            style="background-color: crimson; color: white;" 
+                            class="btn btn-sm btn-danger" 
                             @click="deleteDeveloper(developer)"
                         >
                             <i class="bi bi-trash"></i>

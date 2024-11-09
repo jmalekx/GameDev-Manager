@@ -1,62 +1,55 @@
 <template>
     <div>
-        <div class="d-flex justify-content-between mb-3">
-            <h3>Game List</h3>
-            <button type="button" class="btn btn-primary" @click="openAddModal">
-                Add New Game
+        <div class="d-flex justify-content-between mb-4">
+            <h3 class="text fw-bold">Games</h3>
+            <button type="button" class="btn btn-success btn-lg" @click="openAddModal">
+                <i class="bi bi-plus-circle me-2"></i> Add New Game
             </button>
         </div>
-        <table class="table">
-            <thead>
-                <tr class="align-middle fs-5 py-3">
-                    <th scope="col">#</th>
-                    <th scope="col">Title</th>
-                    <th scope="col">Description</th>
-                    <th scope="col">Release Date</th>
-                    <th scope="col">Platform</th>
-                    <th scope="col">Developers</th>
-                    <th scope="col">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="(game, index) in games" :key="game.id" class="align-middle">
-                    <th scope="row">{{ index + 1 }}</th>
-                    <td>{{ game.title }}</td>
-                    <td>{{ game.description }}</td>
-                    <td>{{ game.release_date }}</td>
-                    <td>{{ game.platform_display }}</td>
-                    <td>
-                        <ul class="list-unstyled m-0 p-0">
+
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            <!-- Loop through each game to display it as a card -->
+            <div v-for="(game, index) in games" :key="game.id" class="col">
+                <div class="card shadow-sm rounded p-3 h-100">
+                    <div class="card-body">
+                        <!-- Slightly larger title -->
+                        <h5 class="card-title text-primary mb-3" style="font-size: 1.25rem; font-weight: 600;">
+                            {{ game.title }}
+                        </h5>
+                        <p class="card-text">{{ game.description }}</p>
+                        <p class="card-text"><strong>Release Date:</strong> {{ game.release_date }}</p>
+                        <p class="card-text"><strong>Platform:</strong> {{ game.platform_display }}</p>
+                        <p class="card-text"><strong>Developers:</strong></p>
+                        <ul class="list-unstyled mb-0">
                             <li v-for="(developer, index) in game.developers" :key="index">
-                                {{ developer.developer_name }} ({{ developer.role }})
+                                <span class="text-muted">{{ developer.developer_name }} ({{ developer.role }})</span>
                             </li>
                         </ul>
-                    </td>
-                    <td>
+                    </div>
+                    <div class="card-footer text-center">
                         <button 
-                            class="btn btn-sm btn me-2"
-                            style="background-color: gold; color: white;"
+                            class="btn btn-warning btn-sm rounded-circle me-2"
+                            style="color: white;"
                             @click="openEditModal(game)"
                         >
                             <i class="bi bi-pencil-square"></i>
                         </button>
                         <button 
-                            class="btn btn-sm btn"
-                            style="background-color: crimson; color: white;" 
+                            class="btn btn-danger btn-sm rounded-circle" 
+                            style="color: white;" 
                             @click="deleteGame(game)"
                         >
                             <i class="bi bi-trash"></i>
                         </button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <GameModal 
             :gameToEdit="gameToEdit"
             @fetch-games="$emit('fetch-games')" 
-        /> <!--component used to bind gameToEdit data to component to be pre-filled or blank
-                listens for fetchgame event and re-emits to parent to trigger list refresh -->
-
+        />
     </div>
 </template>
 
@@ -68,21 +61,21 @@ export default {
     components: {
         GameModal,
     },
-    props: { //passed from parent required to display list in table
+    props: {
         games: {
             type: Array,
             required: true,
         },
     },
-    data() { //holds game object being edited (editmode basically, used in modal)
+    data() {
         return {
             gameToEdit: null,
         };
     },
     methods: {
         openEditModal(game) {
-            this.gameToEdit = game; //allowing gamemodal to prefill form fields with data
-            this.$nextTick(() => { //ensure DOM updated before modal show
+            this.gameToEdit = game;
+            this.$nextTick(() => {
                 const modal = new bootstrap.Modal(document.getElementById('GameModal'));
                 modal.show();
             });
@@ -105,7 +98,7 @@ export default {
                     });
 
                     if (response.ok) {
-                        this.$emit('fetch-games'); //refresh game list after deleting
+                        this.$emit('fetch-games');
                     } else {
                         const errorData = await response.json();
                         alert(`Error deleting game: ${errorData.error}`);
