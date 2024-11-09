@@ -56,8 +56,8 @@ class Game(models.Model):
             'title': self.title,
             'description': self.description,
             'release_date': self.release_date,
-            'platform': self.platform,  # Keep the stored value for editing
-            'platform_display': self.get_platform_display(),  # Optional: Human-readable version
+            'platform': self.platform, 
+            'platform_display': self.get_platform_display(),  #human readable version
             'developers': [
                 {
                     'developer_id': gd.developer.id,
